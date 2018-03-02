@@ -29,29 +29,35 @@ def plot_cost_vs_time(loss, time):
     plt.show()
 
 
-def plot_multiple_cost_vs_time(losses, times, labels, title=None):
-    for loss, time, label in zip(losses, times, labels):
-        t = np.cumsum(time)
-        plt.plot(t, loss, 'x-', label=label)
-    plt.xlabel('Time (sec)')
-    plt.ylabel('Cost Functional')
-    if title is not None:
-        plt.title(title)
+def plot_multiple_cost_vs_time(losses, times, labels, title, sigma, lmbda):
+    fig, axs = plt.subplots(3, 2, figsize=(14, 7), sharex=True)
+
+    fig.text(0.5, 0.04, 'Time (sec)', ha='center')
+    fig.text(0.04, 0.5, 'Cost Functional', va='center', rotation='vertical')
+
+    for i in range(len(axs.flatten())):
+        for loss, time, label in zip(losses, times, labels):
+            t = np.cumsum(time[i])
+            axs.flatten()[i].plot(t, loss[i], 'x-', label=label)
+            axs.flatten()[i].set_title(title.format(sigma[i], lmbda[i]))
+
     plt.legend()
     plt.show()
 
 
-def plot_multiple_metric_vs_time(metrics,
-                                 noise_levels,
-                                 labels,
-                                 y='PSNR',
-                                 title=None):
-    for metric, sigma, label in zip(metrics, noise_levels, labels):
+def plot_multiple_metric_vs_sigma(metrics,
+                                  noise_levels,
+                                  labels,
+                                  y='PSNR',
+                                  title=None):
+    plt.figure(figsize=(14, 7))
+    for metric, label in zip(metrics, labels):
         # t = np.cumsum(time)
-        plt.plot(sigma, metric, 'x', label=label)
+        plt.plot(noise_levels, metric, 'x-', label=label)
     plt.xlabel('Sigma')
     plt.ylabel(y)
     if title is not None:
         plt.title(title)
     plt.legend()
+
     plt.show()
